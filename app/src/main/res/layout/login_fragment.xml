@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="viewModel"
+            type="io.github.sdkei.loginmvvm.viewmodel.LoginViewModel" />
+
+        <import type="io.github.sdkei.loginmvvm.R" />
+
+        <import type="io.github.sdkei.loginmvvm.model.UserType" />
+
+        <import type="io.github.sdkei.loginmvvm.view.UserTypeToRadioButtonIdResConverter" />
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#CCFFCC"
+        tools:context=".view.LoginFragment">
+
+        <RadioGroup
+            android:id="@+id/radio_group_user_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:checkedButton="@={UserTypeToRadioButtonIdResConverter.convert(viewModel.userType)}"
+            android:orientation="horizontal"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <RadioButton
+                android:id="@+id/radio_button_guest_user"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/radio_button_guest_user" />
+
+            <RadioButton
+                android:id="@+id/radio_button_registered_user"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/radio_button_registered_user" />
+
+        </RadioGroup>
+
+        <TextView
+            android:id="@+id/text_view_user_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:labelFor="@id/edit_text_user_id"
+            android:text="@string/text_view_user_id"
+            app:layout_constraintBottom_toBottomOf="@+id/edit_text_user_id"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/edit_text_user_id" />
+
+        <EditText
+            android:id="@+id/edit_text_user_id"
+            android:layout_width="wrap_content"
+            android:layout_height="45dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:autofillHints="AUTOFILL_HINT_USERNAME"
+            android:ems="10"
+            android:enabled="@{viewModel.isUserIdEnabled}"
+            android:inputType="textPersonName"
+            android:text="@={viewModel.userId}"
+            app:layout_constraintStart_toEndOf="@+id/text_view_user_id"
+            app:layout_constraintTop_toBottomOf="@+id/radio_group_user_type" />
+
+        <TextView
+            android:id="@+id/text_view_password"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:labelFor="@id/edit_text_password"
+            android:text="@string/text_view_password"
+            app:layout_constraintBottom_toBottomOf="@+id/edit_text_password"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/edit_text_user_id" />
+
+        <EditText
+            android:id="@+id/edit_text_password"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:autofillHints="AUTOFILL_HINT_PASSWORD"
+            android:ems="10"
+            android:enabled="@{viewModel.isPasswordEnabled}"
+            android:inputType="textPassword"
+            android:text="@={viewModel.password}"
+            app:layout_constraintStart_toEndOf="@+id/text_view_password"
+            app:layout_constraintTop_toBottomOf="@+id/edit_text_user_id" />
+
+        <Button
+            android:id="@+id/button_ok"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:enabled="@{viewModel.isOkEnabled}"
+            android:onClick="@{() -> viewModel.login()}"
+            android:text="@string/button_ok"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/edit_text_password" />
+
+        <Button
+            android:id="@+id/button_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:enabled="@{viewModel.isCancelEnabled}"
+            android:onClick="@{() -> viewModel.cancel()}"
+            android:text="@string/button_cancel"
+            app:layout_constraintBottom_toBottomOf="@+id/button_ok"
+            app:layout_constraintStart_toEndOf="@+id/button_ok"
+            app:layout_constraintTop_toTopOf="@+id/button_ok" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
