@@ -8,4 +8,6 @@
     <string name="button_cancel">Cancel</string>
     <string name="button_close">閉じる</string>
     <string name="dialog_message_login_failed">ログインできませんでした。</string>
+    <string name="button_login">ログイン</string>
+    <string name="button_logout">ログアウト</string>
 </resources>
