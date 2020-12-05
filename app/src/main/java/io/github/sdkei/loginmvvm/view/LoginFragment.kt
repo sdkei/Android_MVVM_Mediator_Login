@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import io.github.sdkei.loginmvvm.R
 import io.github.sdkei.loginmvvm.databinding.LoginFragmentBinding
 import io.github.sdkei.loginmvvm.utils.exhaustive
@@ -44,12 +45,12 @@ class LoginFragment : Fragment() {
 
     @Suppress("UNUSED_PARAMETER")
     private fun onMessageCancelled(message: Message.Cancelled) {
-        TODO()
+        findNavController().navigate(R.id.action_loginFragment_to_beforeLoginFragment)
     }
 
     @Suppress("UNUSED_PARAMETER")
     private fun onMessageSucceeded(message: Message.Succeeded) {
-        TODO()
+        findNavController().navigate(R.id.action_loginFragment_to_afterLoginFragment)
     }
 
     @Suppress("UNUSED_PARAMETER")

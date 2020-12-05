@@ -8,6 +8,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
+import io.github.sdkei.loginmvvm.R
 import io.github.sdkei.loginmvvm.databinding.BeforeLoginFragmentBinding
 import io.github.sdkei.loginmvvm.utils.exhaustive
 import io.github.sdkei.loginmvvm.viewmodel.BeforeLoginViewModel
@@ -40,6 +42,6 @@ class BeforeLoginFragment : Fragment() {
 
     @Suppress("UNUSED_PARAMETER")
     private fun onMessageLogin(message: Message.Login) {
-        TODO()
+        findNavController().navigate(R.id.action_beforeLoginFragment_to_loginFragment)
     }
 }
