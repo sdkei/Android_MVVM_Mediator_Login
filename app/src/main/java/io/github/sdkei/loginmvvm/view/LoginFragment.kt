@@ -29,7 +29,9 @@ class LoginFragment : Fragment() {
                 ViewModelProvider(this).get(LoginViewModel::class.java).also { viewModel ->
                     viewModel.message.onEach {
                         onMessage(it)
-                    }.launchIn(lifecycleScope)
+                    }.launchIn(
+                        lifecycleScope // Dispatchers.Main に束縛されているため、onEach はメインスレッドで実行される。
+                    )
                 }
             binding.lifecycleOwner = viewLifecycleOwner
         }.root
