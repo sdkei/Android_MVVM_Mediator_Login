@@ -58,13 +58,11 @@ class LoginFragment : Fragment() {
     @Suppress("UNUSED_PARAMETER")
     private fun onMessageFailed(message: Message.Failed) {
         // ログインできなかったことを通知するダイアログを表示する。
-        lifecycleScope.launchWhenResumed {
-            AlertDialog.Builder(requireContext())
-                .setMessage(R.string.dialog_message_login_failed)
-                .setPositiveButton(R.string.button_close) { dialog, _ ->
-                    dialog.cancel()
-                }
-                .show()
-        }
+        AlertDialog.Builder(requireContext())
+            .setMessage(R.string.dialog_message_login_failed)
+            .setPositiveButton(R.string.button_close) { dialog, _ ->
+                dialog.cancel()
+            }
+            .show()
     }
 }
