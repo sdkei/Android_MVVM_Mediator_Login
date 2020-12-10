@@ -6,8 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import io.github.sdkei.loginmvvm.R
@@ -20,19 +20,19 @@ import kotlinx.coroutines.flow.onEach
 
 /** ログイン画面。 */
 class LoginFragment : Fragment() {
+    private val viewModel by viewModels<LoginViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View =
         LoginFragmentBinding.inflate(inflater, container, false).also { binding ->
-            binding.viewModel =
-                ViewModelProvider(this).get(LoginViewModel::class.java).also { viewModel ->
-                    viewModel.message.onEach {
-                        onMessage(it)
-                    }.launchIn(
-                        lifecycleScope // Dispatchers.Main に束縛されているため、onEach はメインスレッドで実行される。
-                    )
-                }
+            binding.viewModel = viewModel.also { viewModel ->
+                viewModel.message.onEach {
+                    onMessage(it)
+                }.launchIn(
+                    lifecycleScope // Dispatchers.Main に束縛されているため、onEach はメインスレッドで実行される。
+                )
+            }
             binding.lifecycleOwner = viewLifecycleOwner
         }.root
 
