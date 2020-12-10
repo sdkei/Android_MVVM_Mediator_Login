@@ -25,15 +25,18 @@ class LoginFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View =
-        LoginFragmentBinding.inflate(inflater, container, false).also { binding ->
-            binding.viewModel = viewModel.also { viewModel ->
-                viewModel.message.onEach {
-                    onMessage(it)
-                }.launchIn(
-                    lifecycleScope // Dispatchers.Main に束縛されているため、onEach はメインスレッドで実行される。
-                )
-            }
-            binding.lifecycleOwner = viewLifecycleOwner
+        LoginFragmentBinding.inflate(inflater, container, false).also {
+            it.viewModel = viewModel
+            it.lifecycleOwner = viewLifecycleOwner
+        }.also {
+            // メッセージの監視を開始する。
+            // このタイミングである必要はないが、
+            // データバインディングとタイミングを合わせておく。
+            viewModel.message
+                .onEach { onMessage(it) }
+                .launchIn(lifecycleScope)
+            // ↑lifecycleScope は Dispatchers.Main に束縛されているため、
+            // ↑onMessage 関数はメインスレッドで呼び出される。
         }.root
 
     /** [ViewModel] から送られたメッセージを処理する。 */
