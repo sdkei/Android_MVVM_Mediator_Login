@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.StateFlow
 
 /** ユーザー登録の管理とログインしているユーザーの管理を行うリポジトリー。 */
 @Suppress("ObjectPropertyName")
-object LoginRepository {
+object LoginUseCase {
 
     /** ユーザー名簿。 */
     // 簡単のために Map にする。排他制御も省略する。本来はローカル DB やリモート API などとなる。
