@@ -105,7 +105,7 @@ object LoginRepository {
         require(password.isNotEmpty()) { "パスワードが空です。" }
     }
 
-    /** ログイン中であることを家訓する。 */
+    /** ログイン中であることを確認する。 */
     private fun checkLogin() {
         check(isUserLoggingIn) { "未だログインされていません。" }
     }
