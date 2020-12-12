@@ -18,37 +18,9 @@ object LoginUseCase {
         get() = UserRepository
 
     /** ログイン中のユーザーのユーザー ID。 */
-    private var loginUserId: String? = null
-
-    /** ログイン中のユーザーのユーザー ID。 */
-    val loginUserIdFlow: StateFlow<String?>
-        get() = _loginUserIdFlow
-    private val _loginUserIdFlow = MutableStateFlow(loginUserId)
-
-    /**
-     * ログイン中のユーザーのユーザー ID を返す。
-     *
-     * [mutex] でロックした状態で呼び出さ **ない** こと。
-     */
-    suspend fun getLoginUserId(): String? =
-        mutex.withLock {
-            loginUserId
-        }
-
-    /**
-     * ログイン中のユーザーのユーザー ID をセットする。
-     *
-     * [mutex] でロックした状態で呼び出すこと。
-     */
-    private suspend fun setLoginUser(value: String?) {
-        check(mutex.isLocked)
-
-        if (loginUserId == value) return
-
-        loginUserId = value
-
-        _loginUserIdFlow.emit(value)
-    }
+    val loginUserId: StateFlow<String?>
+        get() = _loginUserId
+    private val _loginUserId = MutableStateFlow<String?>(null)
 
     /**
      * 登録ユーザーでログインする。
@@ -63,7 +35,7 @@ object LoginUseCase {
 
             return userRepository.authenticate(userId, password).also { isSucceeded ->
                 if (isSucceeded) {
-                    loginUserId = userId
+                    _loginUserId.value = userId
                 }
             }
         }
@@ -78,7 +50,7 @@ object LoginUseCase {
         mutex.withLock {
             checkNotLogin()
 
-            loginUserId = GUEST_USER_ID
+            _loginUserId.value = GUEST_USER_ID
         }
     }
 
@@ -91,7 +63,7 @@ object LoginUseCase {
         mutex.withLock {
             checkLogin()
 
-            loginUserId = null
+            _loginUserId.value = null
         }
     }
 
@@ -103,7 +75,7 @@ object LoginUseCase {
     private fun checkLogin() {
         check(mutex.isLocked)
 
-        check(loginUserId != null) { "未だログインされていません。" }
+        check(loginUserId.value != null) { "未だログインされていません。" }
     }
 
     /**
@@ -114,6 +86,6 @@ object LoginUseCase {
     private fun checkNotLogin() {
         check(mutex.isLocked)
 
-        check(loginUserId == null) { "既にログインされています。" }
+        check(loginUserId.value == null) { "既にログインされています。" }
     }
 }
