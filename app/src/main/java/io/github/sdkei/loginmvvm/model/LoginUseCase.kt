@@ -1,26 +1,21 @@
 package io.github.sdkei.loginmvvm.model
 
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.yield
 
 /** ユーザー登録の管理とログインしているユーザーの管理を行うリポジトリー。 */
 @Suppress("ObjectPropertyName")
 object LoginUseCase {
 
-    /** ユーザー名簿。 */
-    // 簡単のために Map にする。排他制御も省略する。本来はローカル DB やリモート API などとなる。
-    private val users: MutableMap<String, String> = mutableMapOf()
-
-    init {
-        // ユーザーを一人登録しておく。（ユーザー追加 UI を省略するため。）
-        runBlocking {
-            registerUser("user", "password")
-        }
-    }
-
     /** ゲストユーザーのユーザー ID。 */
     const val GUEST_USER_ID = ""
+
+    private val userRepository: UserRepository
+        get() = UserRepository
 
     /** ログイン中のユーザーのユーザー ID。 */
     var loginUserId: String? = null
@@ -41,38 +36,19 @@ object LoginUseCase {
     private val _loginUserIdFlow = MutableStateFlow(loginUserId)
 
     /**
-     * ユーザーを登録する。
-     *
-     * @return 成功したかどうか。
-     *  同じユーザーIDのアカウントがすでに存在する場合に限り失敗する。
-     */
-    suspend fun registerUser(userId: String, password: String): Boolean {
-        requireUserIdAndPassword(userId, password)
-
-        yield()
-
-        users[userId]?.also {
-            return false
-        }
-
-        users[userId] = password
-
-        return true
-    }
-
-    /**
      * 登録ユーザーでログインする。
      *
      * @return 成功したかどうか。
      */
     suspend fun loginRegisteredUser(userId: String, password: String): Boolean {
-        requireUserIdAndPassword(userId, password)
-
         yield()
 
         checkNotLogin()
 
-        if (users[userId] != password) {
+        val isSucceeded =
+            userRepository.authenticate(userId, password)
+
+        if (isSucceeded.not()) {
             return false
         }
 
@@ -97,12 +73,6 @@ object LoginUseCase {
         yield()
 
         loginUserId = null
-    }
-
-    /** 引数で与えられたユーザー ID とパスワードが適切なフォーマットであるかどうかを確認する。 */
-    private fun requireUserIdAndPassword(userId: String, password: String) {
-        require(userId.isNotEmpty()) { "ユーザー ID が空です。" }
-        require(password.isNotEmpty()) { "パスワードが空です。" }
     }
 
     /** ログイン中であることを確認する。 */
