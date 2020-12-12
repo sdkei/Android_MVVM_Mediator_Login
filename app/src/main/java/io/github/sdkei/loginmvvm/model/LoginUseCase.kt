@@ -20,6 +20,7 @@ object LoginUseCase {
     /** ログイン中のユーザーのユーザー ID。 */
     private var loginUserId: String? = null
 
+    /** ログイン中のユーザーのユーザー ID。 */
     val loginUserIdFlow: StateFlow<String?>
         get() = _loginUserIdFlow
     private val _loginUserIdFlow = MutableStateFlow(loginUserId)
