@@ -50,11 +50,7 @@ object UserRepository {
 
         yield()
 
-        if (users[userId] != password) {
-            return false
-        }
-
-        return true
+        return users[userId] == password
     }
 
     /** 引数で与えられたユーザー ID とパスワードが適切なフォーマットであるかどうかを確認する。 */
