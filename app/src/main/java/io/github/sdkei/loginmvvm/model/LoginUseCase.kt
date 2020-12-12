@@ -45,16 +45,11 @@ object LoginUseCase {
 
         checkNotLogin()
 
-        val isSucceeded =
-            userRepository.authenticate(userId, password)
-
-        if (isSucceeded.not()) {
-            return false
+        return userRepository.authenticate(userId, password).also { isSucceeded ->
+            if (isSucceeded) {
+                loginUserId = userId
+            }
         }
-
-        loginUserId = userId
-
-        return true
     }
 
     /** ゲストユーザーでログインする。 */
