@@ -1,18 +1,11 @@
 package io.github.sdkei.loginmvvm.viewmodel
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import io.github.sdkei.loginmvvm.model.LoginUseCase
 import io.github.sdkei.loginmvvm.model.UserType
-import io.github.sdkei.loginmvvm.utils.CloseableObservingManager
 import io.github.sdkei.loginmvvm.utils.exhaustive
-import io.github.sdkei.loginmvvm.utils.observe
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 /** ログイン画面の [ViewModel]。 */
@@ -52,22 +45,12 @@ class LoginViewModel : ViewModel() {
 
     private val loginUseCase = LoginUseCase
 
-    private val observingManager = CloseableObservingManager()
-
-    override fun onCleared() {
-        observingManager.close()
-    }
-
     // プロパティが更新されたときに、それに依存する他のプロパティが更新されるように監視を開始する。
     init {
-        userType.observe(observingManager) {
-            updateStatus()
-        }
-        userId.observe(observingManager) {
-            updateStatus()
-        }
-        password.observe(observingManager) {
-            updateStatus()
+        listOf(userType, userId, password).forEach { liveData ->
+            liveData.asFlow()
+                .onEach { updateStatus() }
+                .launchIn(viewModelScope)
         }
     }
 
