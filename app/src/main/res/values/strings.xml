@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">LoginMVVM</string>
     <string name="radio_button_guest_user">Guest</string>
-    <string name="radio_button_registered_user">User</string>
+    <string name="radio_button_registered_user">Login</string>
     <string name="text_view_user_id">Username</string>
     <string name="text_view_password">Password</string>
     <string name="button_ok">OK</string>

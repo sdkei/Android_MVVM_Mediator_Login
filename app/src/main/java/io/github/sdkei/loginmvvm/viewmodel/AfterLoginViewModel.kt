@@ -2,7 +2,7 @@ package io.github.sdkei.loginmvvm.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import io.github.sdkei.loginmvvm.model.LoginRepository
+import io.github.sdkei.loginmvvm.model.LoginUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -17,12 +17,12 @@ class AfterLoginViewModel : ViewModel() {
         get() = _message
     private val _message = MutableSharedFlow<Message>()
 
-    private val loginRepository = LoginRepository
+    private val loginUseCase = LoginUseCase
 
     /** ログアウトし、ログイン前の画面に遷移する。 */
     fun logout() {
         viewModelScope.launch(Dispatchers.Main) {
-            loginRepository.logout()
+            loginUseCase.logout()
 
             _message.emit(Message.Logout)
         }

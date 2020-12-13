@@ -6,8 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import io.github.sdkei.loginmvvm.R
@@ -20,18 +20,23 @@ import kotlinx.coroutines.flow.onEach
 
 /** ログイン画面。 */
 class LoginFragment : Fragment() {
+    private val viewModel by viewModels<LoginViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View =
-        LoginFragmentBinding.inflate(inflater, container, false).also { binding ->
-            binding.viewModel =
-                ViewModelProvider(this).get(LoginViewModel::class.java).also { viewModel ->
-                    viewModel.message.onEach {
-                        onMessage(it)
-                    }.launchIn(lifecycleScope)
-                }
-            binding.lifecycleOwner = viewLifecycleOwner
+        LoginFragmentBinding.inflate(inflater, container, false).also {
+            it.viewModel = viewModel
+            it.lifecycleOwner = viewLifecycleOwner
+        }.also {
+            // メッセージの監視を開始する。
+            // このタイミングである必要はないが、
+            // データバインディングとタイミングを合わせておく。
+            viewModel.message
+                .onEach { onMessage(it) }
+                .launchIn(lifecycleScope)
+            // ↑lifecycleScope は Dispatchers.Main に束縛されているため、
+            // ↑onMessage 関数はメインスレッドで呼び出される。
         }.root
 
     /** [ViewModel] から送られたメッセージを処理する。 */
@@ -56,13 +61,11 @@ class LoginFragment : Fragment() {
     @Suppress("UNUSED_PARAMETER")
     private fun onMessageFailed(message: Message.Failed) {
         // ログインできなかったことを通知するダイアログを表示する。
-        lifecycleScope.launchWhenResumed {
-            AlertDialog.Builder(requireContext())
-                .setMessage(R.string.dialog_message_login_failed)
-                .setPositiveButton(R.string.button_close) { dialog, _ ->
-                    dialog.cancel()
-                }
-                .show()
-        }
+        AlertDialog.Builder(requireContext())
+            .setMessage(R.string.dialog_message_login_failed)
+            .setPositiveButton(R.string.button_close) { dialog, _ ->
+                dialog.cancel()
+            }
+            .show()
     }
 }

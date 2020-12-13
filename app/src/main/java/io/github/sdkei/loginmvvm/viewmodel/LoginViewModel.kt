@@ -1,18 +1,11 @@
 package io.github.sdkei.loginmvvm.viewmodel
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import io.github.sdkei.loginmvvm.model.LoginRepository
+import androidx.lifecycle.*
+import io.github.sdkei.loginmvvm.model.LoginUseCase
 import io.github.sdkei.loginmvvm.model.UserType
-import io.github.sdkei.loginmvvm.utils.CloseableObservingManager
 import io.github.sdkei.loginmvvm.utils.exhaustive
-import io.github.sdkei.loginmvvm.utils.observe
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 /** ログイン画面の [ViewModel]。 */
@@ -50,24 +43,14 @@ class LoginViewModel : ViewModel() {
     /** キャンセルボタンを有効にするかどうか。 */
     val isCancelEnabled: LiveData<Boolean> = MutableLiveData(true) // 常に有効にする。
 
-    private val loginRepository = LoginRepository
-
-    private val observingManager = CloseableObservingManager()
-
-    override fun onCleared() {
-        observingManager.close()
-    }
+    private val loginUseCase = LoginUseCase
 
     // プロパティが更新されたときに、それに依存する他のプロパティが更新されるように監視を開始する。
     init {
-        userType.observe(observingManager) {
-            updateStatus()
-        }
-        userId.observe(observingManager) {
-            updateStatus()
-        }
-        password.observe(observingManager) {
-            updateStatus()
+        listOf(userType, userId, password).forEach { liveData ->
+            liveData.asFlow()
+                .onEach { updateStatus() }
+                .launchIn(viewModelScope)
         }
     }
 
@@ -100,9 +83,9 @@ class LoginViewModel : ViewModel() {
         when (userType.value) {
             UserType.GUEST -> {
                 viewModelScope.launch(Dispatchers.Main) {
-                    loginRepository.loginGuest()
+                    loginUseCase.loginGuest()
 
-                    Message.Succeeded(LoginRepository.GUEST_USER_ID).also {
+                    Message.Succeeded(LoginUseCase.GUEST_USER_ID).also {
                         _message.emit(it)
                     }
                 }
@@ -114,7 +97,7 @@ class LoginViewModel : ViewModel() {
                     .also { check(it.isNotEmpty()) { "パスワードが空です。" } }
 
                 viewModelScope.launch(Dispatchers.Main) {
-                    val isSucceeded = loginRepository.loginRegisteredUser(userId, password)
+                    val isSucceeded = loginUseCase.loginRegisteredUser(userId, password)
                     if (isSucceeded.not()) {
                         _message.emit(Message.Failed(userId))
                         return@launch
