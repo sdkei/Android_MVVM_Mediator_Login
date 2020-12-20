@@ -13,7 +13,7 @@
 
         <import type="io.github.sdkei.loginmvvm.model.UserType" />
 
-        <import type="io.github.sdkei.loginmvvm.view.UserTypeToRadioButtonIdResConverter" />
+        <import type="io.github.sdkei.loginmvvm.view.converter.UserTypeToRadioButtonIdResConverter" />
 
     </data>
 

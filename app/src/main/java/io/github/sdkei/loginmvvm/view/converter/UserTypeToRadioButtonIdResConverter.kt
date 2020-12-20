@@ -1,4 +1,4 @@
-package io.github.sdkei.loginmvvm.view
+package io.github.sdkei.loginmvvm.view.converter
 
 import androidx.annotation.IdRes
 import androidx.databinding.InverseMethod

@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
-/** ログインの管理を行うリポジトリー。 */
+/** ログインの管理を行う。 */
 @Suppress("ObjectPropertyName")
 object LoginUseCase {
 
